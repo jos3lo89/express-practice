@@ -2,7 +2,7 @@ import multer from "multer";
 import path from "path";
 
 export class MulterMiddleware {
-  public static getUploader() {
+  public getUploader() {
     const storage = multer.diskStorage({
       destination: (req, file, cb) => {
         cb(null, "./public/uploads");
@@ -22,12 +22,12 @@ export class MulterMiddleware {
     return multer({ storage });
   }
 
-  public static uploadSingle(fieldName: string) {
-    return MulterMiddleware.getUploader().single(fieldName);
+  public uploadSingle(fieldName: string) {
+    return this.getUploader().single(fieldName);
   }
 
-  public static uploadMultiple(fieldNames: string[]) {
-    return MulterMiddleware.getUploader().fields([
+  public uploadMultiple(fieldNames: string[]) {
+    return this.getUploader().fields([
       { name: fieldNames[0], maxCount: 1 },
       { name: fieldNames[1], maxCount: 1 },
     ]);

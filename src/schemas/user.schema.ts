@@ -18,6 +18,12 @@ const userSchema = new Schema(
       required: true,
       trim: true,
     },
+    image: {
+      type: String,
+      required: true,
+      trim: true,
+      unique: true,
+    },
   },
   {
     timestamps: true,
@@ -25,4 +31,4 @@ const userSchema = new Schema(
   }
 );
 
-export const userModel = model("users", userSchema);
+export const userModelM = model("users", userSchema);

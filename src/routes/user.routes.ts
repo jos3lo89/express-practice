@@ -1,26 +1,33 @@
 import { Router } from "express";
 import { UserController } from "../controllers/user.controller";
-import { MulterMiddleware } from "../middlewares/multer.middleware";
 import { ValidatorMidd } from "../middlewares/validator.middleware";
-import { UserValidatorZod } from "../validators/user.validator";
+import { userLoginZod, userRegisterZod } from "../validators/user.validator";
+import { MulterMiddleware } from "../middlewares/multer.middleware";
 
-const route = Router();
+export class UserRoutes {
+  public route: Router;
 
-const userController = new UserController();
-const validatorMidd = new ValidatorMidd();
-const userValidatorZod = new UserValidatorZod();
+  private controller: UserController = new UserController();
+  private validator: ValidatorMidd = new ValidatorMidd();
+  private multerMiddleware: MulterMiddleware = new MulterMiddleware();
 
-route.post(
-  "/register",
-  MulterMiddleware.uploadSingle("foto"),
-  validatorMidd.bodyValidator(userValidatorZod.register()),
-  userController.register
-);
+  constructor() {
+    this.route = Router();
+    this.registerRoutes();
+  }
 
-route.post(
-  "/login",
-  validatorMidd.bodyValidator(userValidatorZod.login()),
-  userController.login
-);
+  protected registerRoutes() {
+    this.route.post(
+      "/register",
 
-export default route;
+      this.multerMiddleware.uploadSingle("foto"),
+      this.validator.bodyValidator(userRegisterZod),
+      this.controller.register
+    );
+    this.route.post(
+      "/login",
+      this.validator.bodyValidator(userLoginZod),
+      this.controller.login
+    );
+  }
+}

@@ -1,26 +1,34 @@
 import { Request, Response } from "express";
-import { userModel } from "../schemas/user.schema";
+import { UserModel } from "../models/user.model";
 
 export class UserController {
-  private userModel = userModel;
+  private userModel = new UserModel();
 
-  // static async register(req: Request, res: Response) {
-  async register(req: Request, res: Response) {
+  public register = async (req: Request, res: Response) => {
     try {
-      // console.log("controller body -> ", req.body);
-      // console.log("controller foto -> ", req.file);
+      if (!req.file) throw new Error("Falta foto perfil");
 
-      res.status(200).json({ message: ["register user"] });
+      console.log(req.file);
+
+      const body = { ...req.body, image: `/uploads/${req.file.filename}` };
+
+      const newUser = await this.userModel.create(body);
+
+      if (!newUser) throw new Error("no se pudo crear el usuario");
+
+      const { password: _, ...userWithOutPassword } = newUser;
+
+      res.status(200).json(userWithOutPassword);
     } catch (error: any) {
       res.status(400).json({ message: [error.message] });
     }
-  }
+  };
 
-  async login(req: Request, res: Response) {
+  public login = async (req: Request, res: Response) => {
     try {
       res.status(200).json({ message: ["login"] });
     } catch (error: any) {
       res.status(400).json({ message: [error.message] });
     }
-  }
+  };
 }
